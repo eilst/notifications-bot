@@ -62,6 +62,16 @@
             :rules="inputRules"
             class="input-group--focused"
             @click:append="show = !show"></v-text-field>
+        
+        <v-text-field v-model="tickerSymbol" label="Ticker Symbol"  ></v-text-field>
+       <label>Chart Period</label>
+         <v-select
+          :items="chartPeriods"
+          v-model="chartPeriod"
+          label="Indicator"
+          hint="Chart Period"
+          solo
+        ></v-select>
 
         <label>Indicator</label>
          <v-select
@@ -181,6 +191,19 @@ export default {
       due: null,
       sms: true,
       phoneCall: false,
+      tickerSymbol: '',
+      chartPeriod: '',
+      chartPeriods:['1 min',
+      '2 mins',
+      '5 mins',
+      '15 mins',
+      '30 mins',
+      '1 hour',
+      '4 hours',
+      '1 day',
+      '1 week',
+      '1 month',
+      '1 year'],
       indicators: ['Keltner Channel'],
       kcbands: ['Upper', 'Middle', 'Lower'],
       kcband:'',
@@ -214,26 +237,28 @@ export default {
     submit() {
       if(this.$refs.form.validate()) {
         debugger;
-        fetch("http://localhost:8000/alarm/", {
+        fetch("http://10.42.0.54:5000/alarm", {
               body: JSON.stringify({
-                "title":this.title,
-                "twilio_key": this.twilio_key,
-                "twilio_sid": this.twilio_sid,
-                "ameritrade_key": this.ameritrade_key,
-                "from_phone": this.from_phone,
-                "to_phones": String(this.to_phones),
-                "indicator": this.indicator,
-                "kcband": this.kcband,
-                "crossingType": this.crossingType,
-                "displace": this.displace,
-                "factor": this.factor,
-                "length": this.length,
-                "price": this.price,
-                "averageType": this.averageType,
-                "trueRangeAverageType": this.trueRangeAverageType,
-                "sms": this.sms,
-                "phone_call": this.phoneCall,
-                "status":'inactive'
+                    "title":this.title,
+                    "twilio_key": this.twilio_key,
+                    "twilio_sid": this.twilio_sid,
+                    "ameritrade_key": this.ameritrade_key,
+                    "from_phone": this.from_phone,
+                    "to_phones": String(this.to_phones),
+                    "indicator": this.indicator,
+                    "kcband": this.kcband,
+                    "crossingType": this.crossingType,
+                    "displace": this.displace,
+                    "factor": this.factor,
+                    "length": this.length,
+                    "price": this.price,
+                    "averageType": this.averageType,
+                    "trueRangeAverageType": this.trueRangeAverageType,
+                    "sms": this.sms,
+                    "tickerSymbol": this.tickerSymbol,
+                    "chartPeriod": this.chartPeriod,
+                    "phone_call": this.phoneCall,
+                    "status":'inactive'
                  }),
               headers: {
                 Accept: "application/json",

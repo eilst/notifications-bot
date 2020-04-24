@@ -36,7 +36,7 @@ export default {
       alarms: []
     }
   }, mounted () {
-    axios.get('http://localhost:8000/alarms').then(response => (this.alarms = response['data']))
+    axios.get('http:///10.42.0.54:5000/alarm').then(response => (this.alarms = response['data']))
   },
     components: { AlarmSummary },
 

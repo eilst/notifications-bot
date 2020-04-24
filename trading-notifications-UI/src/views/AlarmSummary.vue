@@ -53,7 +53,7 @@ export default {
     },
     activate: function(event){
         debugger;
-                fetch("http://localhost:8000/start_alarm/", {
+                fetch("http://localhost:5000/start_alarm", {
               body: JSON.stringify(
                 this.alarm
                  ),
