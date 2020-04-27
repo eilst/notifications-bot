@@ -1,7 +1,6 @@
 import multiprocessing
 from multiprocessing import Process, Queue
 import time 
-from indicators import kc
 import requests
 from pandas import DataFrame, Series
 from finta import TA
@@ -35,22 +34,26 @@ class TradingAlarmProcess:
              'https://api.tdameritrade.com/v1/marketdata/' + self.tickerSymbol\
               + '/pricehistory'  
         self.set_indicator_function()    
-        self.active = True
-        self.condition = True 
-        self.start_alarm()
+        self.active = False
 
     def set_indicator_function(self ):
         indicator = self.alarm['indicator']
+        kc = ''
         if indicator == 'Keltner Channel':
             self.indicator_main = kc,
 
     def start_alarm(self):
-        self.process = Process(target=self.main_alarm)
+        self.active = True
+        self.process = Process(target=self.main_alarm, args=(self.main_queu,))
         self.process.start()
 
 
-    def main_alarm(self):
+    def main_alarm(self, q):
         while self.active: 
+            if not q.empty():
+                val = q.get()
+                if val == 'STOP':
+                    break
             #Currently for minutes only 1,5,10,15,30 
             time.sleep(5 * int(self.alarm['chartPeriod'][0] ))
             response = requests.get(self.price_history_request_url, headers=self.headers, params=self.params)
@@ -95,6 +98,8 @@ class TradingAlarmProcess:
 
     def main_stop_alarm(self):
         self.active = False
+        self.main_queu.put('STOP')
         self.process.join()
+        print("Alarm :"+ self.alarm['title'] + ' deactivated')
 
 

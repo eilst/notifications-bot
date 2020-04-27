@@ -13,6 +13,8 @@ marshmallow-sqlalchemy = "*"
 pandas = "*"
 finta = "*"
 twilio = "*"
+flask-cors = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.7"
