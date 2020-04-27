@@ -52,6 +52,8 @@
       </v-chip>
     </template>
   </v-combobox>
+     <v-btn small @click="send_sms" color="primary">Test sms</v-btn>
+    <v-btn small @click="send_call" color="primary">Test Phone call</v-btn>
           <v-text-field  
             :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" 
             :type="show ? 'text' : 'password'"
@@ -234,10 +236,39 @@ export default {
     }
   },
   methods: {
+    send_call(){
+      fetch("http://localhost:5000/send_call", {
+              body: JSON.stringify({
+                    "twilio_key": this.twilio_key,
+                    "twilio_sid": this.twilio_sid,
+                    "from_phone": this.from_phone,
+                    "to_phones": String(this.to_phones)
+                 }),
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              },
+              method: "POST"
+            });
+    },
+    send_sms() { fetch("http://localhost:5000/send_sms", {
+              body: JSON.stringify({
+                    "twilio_key": this.twilio_key,
+                    "twilio_sid": this.twilio_sid,
+                    "from_phone": this.from_phone,
+                    "to_phones": String(this.to_phones)
+                 }),
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              },
+              method: "POST"
+            });
+},
     submit() {
       if(this.$refs.form.validate()) {
         debugger;
-        fetch("http://10.42.0.54:5000/alarm", {
+        fetch("http://localhost:5000/alarm", {
               body: JSON.stringify({
                     "title":this.title,
                     "twilio_key": this.twilio_key,

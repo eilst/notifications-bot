@@ -65,6 +65,19 @@ export default {
             });
         this.alarm.status = 'active';
     },
+    deactivate: function(event){
+                fetch("http://localhost:5000/stop_alarm", {
+              body: JSON.stringify(
+                this.alarm
+                 ),
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              },
+              method: "POST"
+            });
+        this.alarm.status = 'active';
+    },
     deleteAlarm: function(){
     axios.delete("http://localhost:8000/alarm/"+ String(this.alarm.id));
     //TODO Tick, refresh 
@@ -76,7 +89,7 @@ export default {
         if(newValue){
         this.activate();
         }else{
-            //TODO: Deactivate endpoint
+        this.deactivate();
         this.alarm.status = 'inactive';
         }
         console.log(newValue);

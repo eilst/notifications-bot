@@ -25,7 +25,7 @@ ma = Marshmallow(app)
 
 class TwilioNotifications:
 
-    def __init__(self, accont_sid, auth_token, message, from_phone, to_phones):
+    def __init__(self, account_sid, auth_token, message, from_phone, to_phones):
         self.account_sid = account_sid
         self.auth_token = auth_token
         self.client = Client(account_sid, auth_token)
@@ -33,14 +33,22 @@ class TwilioNotifications:
         self.from_phone = from_phone
         self.to_phones = to_phones
 
-    def send_call(self, message ):
-        for phone in self.to_phones:
-            client.calls.create(
+    def send_call(self ):
+        for phone in self.to_phones.split(','):
+            self.client.calls.create(
                 twiml='<Response><Say language="eng-US" >' + self.message + '</Say></Response>',
                 to= phone,
                 from_=self.from_phone
                 )
 
+    def send_sms(self):
+        for phone in self.to_phones.split(','):
+            print(phone)
+            self.client.messages.create(
+                    body=self.message,
+                    from_=self.from_phone,
+                    to=phone
+                )
 
 class TradingAlarmProcess:
     def __init__(self, alarm):
@@ -127,8 +135,7 @@ class TradingAlarmProcess:
         if self.alarm['phone_call']:
             notifications.send_call()
         if self.alarm['sms']:
-            pass
-            #notifications.send_sms()
+            notifications.send_sms()
 
     def main_stop_alarm(self):
         self.active = False
@@ -307,6 +314,33 @@ def start_alarm():
   new_alarm.start_alarm()
   active_alarms.append(new_alarm)
   return jsonify({'status':200})
+
+@app.route('/send_sms', methods=['POST','OPTIONS'])
+@cross_origin()
+def send_sms():
+  notification = TwilioNotifications(
+      request.json['twilio_sid'],
+      request.json['twilio_key'],
+      'Hello, this is a test message. It is working',
+      request.json['from_phone'],
+      request.json['to_phones'],
+  )
+  notification.send_sms()
+  return jsonify({'status':200})
+
+@app.route('/send_call', methods=['POST','OPTIONS'])
+@cross_origin()
+def send_call():
+  notification = TwilioNotifications(
+      request.json['twilio_sid'],
+      request.json['twilio_key'],
+      'Hello, this is a test message. It is working',
+      request.json['from_phone'],
+      request.json['to_phones'],
+  )
+  notification.send_call()
+  return jsonify({'status':200})
+
 
 @app.route('/stop_alarm', methods=['POST','OPTIONS'])
 @cross_origin()
